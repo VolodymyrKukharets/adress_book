@@ -109,8 +109,6 @@ class Phone(Field):
         # Represents a phone number field in a record
         if self.validate_phone_number(value):
             super().__init__(value)
-        else:
-            print("Invalid format or phone number")
 
     @staticmethod
     def validate_phone_number(phone_num):
@@ -128,8 +126,6 @@ class Birthday(Field):
         # Represents a birthday field in a record
         if self.validate_data(value):
             super().__init__(value)
-        else:
-            print("Invalid format or phone number")
 
     @staticmethod
     def validate_data(birthday):
