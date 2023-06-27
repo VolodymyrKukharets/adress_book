@@ -106,13 +106,20 @@ class Name(Field):
 
 class Phone(Field):
     def __init__(self, value):
-        # Represents a phone number field in a record
         if self.validate_phone_number(value):
             super().__init__(value)
 
+    @property
+    def value(self):
+        return self._value
+
+    @value.setter
+    def value(self, new_value):
+        if self.validate_phone_number(new_value):
+            self._value = new_value
+
     @staticmethod
     def validate_phone_number(phone_num):
-        # Validate the format of a phone number
         pattern = r"^(?:\+?380|0)\d{9}$"
         if re.match(pattern, phone_num):
             return True
@@ -126,6 +133,15 @@ class Birthday(Field):
         # Represents a birthday field in a record
         if self.validate_data(value):
             super().__init__(value)
+
+    @property
+    def value(self):
+        return self._value
+
+    @value.setter
+    def value(self, new_value):
+        if self.validate_data(new_value):
+            self._value = new_value
 
     @staticmethod
     def validate_data(birthday):
