@@ -33,22 +33,22 @@ class AddressBook(UserDict):
             key, val = items[i]
             user_name = val.name.value
             user_numbers = []
-            user_birthday = val.birthday
 
             for phone in val.phones:
-                user_numbers.append(phone.value)
-
-            if val.birthday != None:
-                user_birthday = val.birthday.__dict__
-            else:
+                try:
+                    user_numbers.append(phone.value)
+                except:
+                    pass
+            try:
+                user_birthday = val.birthday.value if val.birthday else "None"
+            except:
                 user_birthday = "None"
-
             users.append(f"|{user_name:^40}|{', '.join(user_numbers):^40}|{user_birthday:^40}|")
 
         self.count += self.page_size
 
-        for i in users:
-            print(i)
+        for user in users:
+            print(user)
 
         return users
 
@@ -110,9 +110,10 @@ class Phone(Field):
     def validate_phone_number(phone_num):
         pattern = r"^(?:\+?380|0)\d{9}$"
         if re.match(pattern, phone_num):
-            return "validate"
+            return True
         else:
-            return "Incorrect phone number. Please try again."
+            print("Incorrect phone number. Please try again.")
+            return False
 
 
 class Birthday(Field):
@@ -128,6 +129,9 @@ class Birthday(Field):
         if len(data_list) == 3:
             day, month, year = map(int, data_list)
             if 1 <= day <= 31 and 1 <= month <= 12:
-                return data_list
+                return True
         else:
             print("Invalid data format. Must be in the format '31/12/1991'")
+            return False
+
+
