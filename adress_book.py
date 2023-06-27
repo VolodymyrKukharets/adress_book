@@ -10,13 +10,14 @@ class AddressBook(UserDict):
         self.count = 0
 
     def add_record(self, record):
+        # Add a record to the address book
         self.data[record.name.value] = record
 
     def search(self, search_obj):
+        # Search for a user or phone number in the address book
         if search_obj.value in self.data:
             phones_iter = self.data[search_obj.value].phones
             print(list(map(lambda x: x.value, phones_iter)))
-
         else:
             for key, val in self.data.items():
                 if list(filter(lambda x: x.value == search_obj.value, val.phones)):
@@ -25,6 +26,7 @@ class AddressBook(UserDict):
                     print("I can't find this user or phone number")
 
     def __next__(self):
+        # Iterate over the address book
         items = list(self.data.items())
         if self.count >= len(items):
             raise StopIteration()
@@ -57,8 +59,8 @@ class AddressBook(UserDict):
 
 
 class Record:
-
     def __init__(self, name, phone=None, birthday=None):
+        # Represents a record in the address book
         self.name = name
         self.phones = []
         self.birthday = birthday
@@ -66,19 +68,23 @@ class Record:
             self.phones.append(phone)
 
     def add_phone(self, phone):
+        # Add a phone number to the record
         self.phones.append(phone)
 
     def delete_phone(self, phone):
+        # Delete a phone number from the record
         for index, user_phone in enumerate(self.phones):
             if user_phone.value == phone.value:
                 self.phones.pop(index)
 
     def edit_phone(self, old_phone, new_phone):
+        # Edit a phone number in the record
         for index, user_phone in enumerate(self.phones):
             if user_phone.value == old_phone.value:
                 self.phones[index] = new_phone
 
     def days_to_birthday(self):
+        # Calculate the number of days until the next birthday
         today = datetime.now()
         birthday_in_this_year = datetime(year=today.year, month=self.birthday.value[1], day=self.birthday.value[0])
         if birthday_in_this_year < today:
@@ -99,8 +105,8 @@ class Name(Field):
 
 
 class Phone(Field):
-
     def __init__(self, value):
+        # Represents a phone number field in a record
         if self.validate_phone_number(value):
             super().__init__(value)
         else:
@@ -108,6 +114,7 @@ class Phone(Field):
 
     @staticmethod
     def validate_phone_number(phone_num):
+        # Validate the format of a phone number
         pattern = r"^(?:\+?380|0)\d{9}$"
         if re.match(pattern, phone_num):
             return True
@@ -118,6 +125,7 @@ class Phone(Field):
 
 class Birthday(Field):
     def __init__(self, value):
+        # Represents a birthday field in a record
         if self.validate_data(value):
             super().__init__(value)
         else:
@@ -125,6 +133,7 @@ class Birthday(Field):
 
     @staticmethod
     def validate_data(birthday):
+        # Validate the format of a birthday date
         data_list = birthday.split("/")
         if len(data_list) == 3:
             day, month, year = map(int, data_list)
@@ -133,5 +142,3 @@ class Birthday(Field):
         else:
             print("Invalid data format. Must be in the format '31/12/1991'")
             return False
-
-
