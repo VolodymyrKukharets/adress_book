@@ -9,7 +9,10 @@ This repository contains an implementation of an address book that allows users 
 The `AddressBook` class is a subclass of `UserDict` and represents the address book. It provides the following methods:
 
 - `add_record(record)`: Adds a `Record` object to the address book.
+- `save_to_file(filename="address_book.csv")`: Saves the address book to a CSV file.
+- `load_from_file(filename="address_book.csv")`: Loads records from a CSV file into the address book.
 - `search(search_obj)`: Searches for records in the address book based on a given search object.
+  
 
 ### Record
 
@@ -38,46 +41,47 @@ To use the address book, follow these steps:
 
 1. Import the required classes from the module:
    ```python
-   `from collections import UserDict`
+   from collections import UserDict
    ```
    
 2. Create an instance of the AddressBook class:
     ```python
-    address_book = AddressBook()
+   address_book = AddressBook()
     ```
 
 3. Create instances of the Name and Phone classes:
     ```python
    name = Name("John Doe")
    phone = Phone("123-456-7890")
+   birthday = Birthday("01/01/1990")
    ```
 
 4. Create a Record object and add it to the address book:
     ```python
-    record = Record(name, phone)
+   record = Record(name, phone, birthday)
    address_book.add_record(record)
    ```
 
 5. Perform operations on the address book:
     - Add a phone number to a record:
     ```python
-      phone2 = Phone("987-654-3210")
-       record.add_phone(phone2)
+   phone2 = Phone("987-654-3210")
+   record.add_phone(phone2)
     ```
 
    - Delete a phone number from a record:
     ```python
-       record.delete_phone(phone)
+   record.delete_phone(phone)
     ```
 
    - Edit a phone number in a record:
    ```python
-       new_phone = Phone("555-555-5555")
-       record.edit_phone(phone2, new_phone)
+   new_phone = Phone("555-555-5555")
+   record.edit_phone(phone2, new_phone)
    ```
 
    - Search for records:
    ```python
-       search_name = Name("John Doe")
-       address_book.search(search_name)
+   search_string = "John"
+   address_book.search(search_string)
    ```
