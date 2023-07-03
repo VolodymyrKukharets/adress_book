@@ -1,6 +1,7 @@
 from collections import UserDict
 from datetime import datetime
 import re
+import csv
 
 
 class AddressBook(UserDict):
@@ -13,17 +14,60 @@ class AddressBook(UserDict):
         # Add a record to the address book
         self.data[record.name.value] = record
 
-    def search(self, search_obj):
-        # Search for a user or phone number in the address book
-        if search_obj.value in self.data:
-            phones_iter = self.data[search_obj.value].phones
-            print(list(map(lambda x: x.value, phones_iter)))
-        else:
-            for key, val in self.data.items():
-                if list(filter(lambda x: x.value == search_obj.value, val.phones)):
-                    print(key)
+    def save_to_file(self, filename="address_book.csv"):
+        with open(filename, 'w', newline='') as file:
+            writer = csv.writer(file)
+            writer.writerow(["Name", "Phone", "Birthday"])
+            for record in self.data.values():
+                phones = ', '.join([phone.value for phone in record.phones])
+                birthday = record.birthday.value if len(record.birthday.__dict__) > 0 else ''
+                writer.writerow([record.name.value, phones, birthday])
+
+    def load_from_file(self, filename="address_book.csv"):
+        self.data.clear()
+        with open(filename, 'r', newline='') as file:
+            reader = csv.reader(file)
+            header = next(reader)  # Skip the header row
+            for row in reader:
+                name = Name(row[0])
+                phones = [Phone(phone.strip()) for phone in row[1].split(',') if phone.strip()]
+                birthday = Birthday(row[2]) if row[2] else None
+                record = Record(name, phones[0] if phones else None, birthday)
+                for phone in phones[1:]:
+                    record.add_phone(phone)
+                self.add_record(record)
+
+    def search(self, search_string):
+        results = []
+        for record in self.data.values():
+            if search_string.lower() in record.name.value.lower():
+                results.append(record)
+            elif len(record.birthday.__dict__) > 0 and search_string in record.birthday.value:
+                results.append(record)
+            else:
+                for phone in record.phones:
+                    if len(phone.__dict__) > 0 and search_string in phone.value:
+                        results.append(record)
+                        break
+
+
+        if results:
+            for result in results:
+                print(f"Name: {result.name.value}")
+                print("Phones:")
+                for phone in result.phones:
+                    if len(phone.__dict__) > 0:
+                        print(f"- {phone.value}")
+
+                if len(result.birthday.__dict__) > 0:
+                    print(f"Birthday: {result.birthday.value}")
                 else:
-                    print("I can't find this user or phone number")
+                    print(f"Birthday: None")
+
+
+                print()
+        else:
+            print("No results found.")
 
     def __next__(self):
         # Iterate over the address book
@@ -124,7 +168,7 @@ class Phone(Field):
         if re.match(pattern, phone_num):
             return True
         else:
-            print("Incorrect phone number. Please try again.")
+            print(f"Incorrect phone number {phone_num}. Please try again.")
             return False
 
 
